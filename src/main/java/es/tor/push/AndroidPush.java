@@ -23,107 +23,90 @@ public class AndroidPush {
         this.dao = dao;
     }
 
-    public long sendAndroid(Notification notificacion, List<Device> dispositivos) {
+    public long send(Notification notification, List<Device> devices) {
         long correctos = 0;
 
         List<String> tokens = new ArrayList<String>();
-        List<Device> dispositivosSend = new ArrayList<Device>();
-        for (Device dispositivo : dispositivos) {
-            if (dispositivo.getType().equals(Device.APPLE))
+        List<Device> devicesSend = new ArrayList<Device>();
+        for (Device device : devices) {
+            if (device.getType().equals(Device.APPLE))
                 continue;
 
-            dispositivosSend.add(dispositivo);
-            tokens.add(dispositivo.getToken());
+            devicesSend.add(device);
+            tokens.add(device.getToken());
 
-            if (dispositivosSend.size() == 1000) {
-                correctos += sendMultiMessage(notificacion, dispositivosSend, tokens);
+            if (devicesSend.size() == 1000) {
+                correctos += sendMultiMessage(notification, devicesSend, tokens);
 
                 tokens = new ArrayList<String>();
-                dispositivosSend = new ArrayList<Device>();
+                devicesSend = new ArrayList<Device>();
             }
 
         }
 
-        if (dispositivosSend.size() > 0) {
-            correctos += sendMultiMessage(notificacion, dispositivosSend, tokens);
+        if (devicesSend.size() > 0) {
+            correctos += sendMultiMessage(notification, devicesSend, tokens);
         }
         
         return correctos;
     }
 
-    protected boolean checkResult(Result result, Device dispositivo) {
+    private boolean checkResult(Result result, Device device) {
         if (result.getMessageId() != null) {
-            // Si nos devuelve un nuevo Id, cambiamos el token
+            // Update token if is different
             if (result.getCanonicalRegistrationId() != null) {
-                dispositivo.setToken(result.getCanonicalRegistrationId());
+                device.setToken(result.getCanonicalRegistrationId());
                 if (dao != null)
-                    dao.save(dispositivo);
+                    dao.save(device);
             }
 
             return true;
 
         } else {
-            // Si nos dice que no está registrado el dispositivo,
-            // lo eliminamos de la bd
+            // Remove device if not registered
             if (result.getErrorCodeName().equals(Constants.ERROR_NOT_REGISTERED)) {
                 if (dao != null)
-                    dao.remove(dispositivo.getIdDispositivo());
+                    dao.remove(device);
             } else {
-                logger.error("Error al enviar push al dispositivo: " + result.getErrorCodeName());
+                logger.error("Error sending push to device: " + result.getErrorCodeName());
             }
 
             return false;
         }
     }
 
-    protected int sendMultiMessage(Notification notificacion, List<Device> dispositivos, List<String> tokens) {
-        String collapseKey = getCollapseKey(notificacion);
-
-        String mensaje;
-        // Todos los dispositivos de este grupo estarán con el mismo idioma
-        if (dispositivos.get(0).getIdioma().equals(1)) {
-            if (notificacion.getMensaje() != null && !notificacion.getMensaje().isEmpty()) {
-                mensaje = notificacion.getMensaje();
-            } else {
-                mensaje = notificacion.getMensajeVa();
-            }
-        } else {
-            if (notificacion.getMensajeVa() != null && !notificacion.getMensajeVa().isEmpty()) {
-                mensaje = notificacion.getMensajeVa();
-            } else {
-                mensaje = notificacion.getMensaje();
-            }
-        }
+    private int sendMultiMessage(Notification notification, List<Device> devices, List<String> tokens) {
+        String collapseKey = getCollapseKey(notification);
 
         Message message = new Message.Builder()
                         .collapseKey(collapseKey)
-                        .addData("cabecera",
-                                        notificacion.getTitulo().length() > 50 ? notificacion.getTitulo().substring(1,
-                                                        50) : notificacion.getTitulo()).addData("mensaje", mensaje)
+                        .addData("title",
+                                        notification.getTitle().length() > 50 ? notification.getTitle().substring(1,
+                                                        50) : notification.getTitle()).addData("message", notification.getMessage())
                         .build();
 
         try {
             Sender sender = new Sender();
             MulticastResult results = sender.send(message, tokens, 5);
             int count = 0;
-            int correctos = 0;
+            int corrects = 0;
             for (Result result : results.getResults()) {
-                if (checkResult(result, dispositivos.get(count))) {
-                    correctos++;
+                if (checkResult(result, devices.get(count))) {
+                    corrects++;
                 }
                 count++;
             }
 
-            return correctos;
+            return corrects;
 
         } catch (Exception e) {
-            logger.error("Error inesperado al enviar push Android", e);
+            logger.error("Unexpected error sending push to Android", e);
         }
 
         return 0;
     }
 
-    private String getCollapseKey(Notification notificacion) {
-        return String.valueOf(notificacion.getIdNotificacion());
+    private String getCollapseKey(Notification notification) {
+        return String.valueOf(notification.getTitle());
     }
 }

@@ -26,7 +26,7 @@ public class ApplePush {
         this.deviceDao = deviceDao;
     }
 
-    public long sendApple(Notification notification, List<Device> devices, boolean isProduction) {
+    public long send(Notification notification, List<Device> devices, boolean isProduction) {
         long correctos = 0;
 
         ApnsService service;
