@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/Vigia/!svn/ver/1769/Otros/Lanzadera/Web/src/main/resources/spring
+END
+mail.xml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/Vigia/!svn/ver/1740/Otros/Lanzadera/Web/src/main/resources/spring/mail.xml
+END
+app-config.xml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/Vigia/!svn/ver/1769/Otros/Lanzadera/Web/src/main/resources/spring/app-config.xml
+END
+applicationContext.xml
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svnroot/Vigia/!svn/ver/1769/Otros/Lanzadera/Web/src/main/resources/spring/applicationContext.xml
+END
+security.xml
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/Vigia/!svn/ver/1769/Otros/Lanzadera/Web/src/main/resources/spring/security.xml
+END
