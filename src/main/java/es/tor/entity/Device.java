@@ -8,16 +8,16 @@ public class Device implements Serializable {
     public static final Integer APPLE = 1;
     public static final Integer ANDROID = 2;
 
-    protected Long idDevice;
+    protected Long id;
     protected Integer type;
     protected String token;
 
-    public Long getIdDevice() {
-        return idDevice;
+    public Long getId() {
+        return id;
     }
 
-    public void setIdDevice(Long idDevice) {
-        this.idDevice = idDevice;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Integer getType() {

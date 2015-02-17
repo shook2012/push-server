@@ -22,8 +22,8 @@ public class DeviceController extends GenericController {
     @ResponseBody
     public Long register(@ModelAttribute Device device) {
         Device deviceActual;
-        if (device.getIdDevice() != null && device.getIdDevice() > 0) {
-            deviceActual = deviceDao.findById(device.getIdDevice());
+        if (device.getId() != null && device.getId() > 0) {
+            deviceActual = deviceDao.findById(device.getId());
         } else {
             deviceActual = deviceDao.findByToken(device.getToken());
         }
@@ -35,10 +35,10 @@ public class DeviceController extends GenericController {
             }
 
         } catch (Exception e) {
-            logger.error("El device ya estaba registrado", e);
+            logger.error("Device was already registered", e);
         }
 
-        return device.getIdDevice();
+        return device.getId();
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
@@ -47,6 +47,5 @@ public class DeviceController extends GenericController {
         response.setStatus(200);
         response.setContentType("text/plain");
         response.setContentLength(0);
-
     }
 }

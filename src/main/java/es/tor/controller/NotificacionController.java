@@ -33,7 +33,7 @@ public class NotificacionController extends GenericController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String testAndroid(HttpServletRequest request) {
         Device iphone = new Device();
-        iphone.setIdDevice(1000L);
+        iphone.setId(1000L);
         iphone.setType(Device.ANDROID);
         iphone.setToken("");
 
@@ -57,7 +57,7 @@ public class NotificacionController extends GenericController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String testApple(HttpServletRequest request) {
         Device iphone = new Device();
-        iphone.setIdDevice(1000L);
+        iphone.setId(1000L);
         iphone.setType(Device.APPLE);
         iphone.setToken("");
 
